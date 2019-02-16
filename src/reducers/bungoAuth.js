@@ -31,6 +31,19 @@ export default bungoTokenReducer = (state = initialState, action) => {
                 isFetching: false,
                 error: true
             }
+        case 'GET_MEMBERSHIPS':
+            return {
+                ...state,
+                destinyMembershipId: action.data.membershipId,
+                membershipType: action.data.membershipType,
+                displayName: action.data.displayName,
+                iconPath: action.data.iconPath
+            }
+        case 'FUCKING_ERROR':
+            return {
+                ...state,
+                error: action.err
+            }
         default:
             return state
     }
