@@ -11,4 +11,4 @@ cd into shaxx-chat & install dependencies
 `npm install`
 
 Start expo and then open Expo app in your phone
-'expo start'
+`expo start`
