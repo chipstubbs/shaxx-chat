@@ -10,7 +10,7 @@ export const getBungoTokenFromAPI = () => {
 
 export function bungoGiveToken(code) {
     return function action(dispatch) {
-      dispatch({ type: BUNGO_FETCH })
+      dispatch(getBungoToken());
   
       const request = fetch(BUNGO_TOKEN_REQ, {
             method: 'POST',
