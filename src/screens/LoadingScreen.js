@@ -28,7 +28,6 @@ class LoadingScreen extends Component {
         // await this._bungoGiveToken(queryParams);
         // await this.props.getBungoTokenFromAPI();
         await this.props.bungoGiveToken(queryParams.code);
-        // await this.props.bungoGiveToken(queryParams.code);
     };
 
     // _bungoGiveToken = async(queryParams) => {
@@ -66,23 +65,19 @@ class LoadingScreen extends Component {
     //         .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
     //         .join('&');
     // }
-
-    hideLoad = () => {
-        console.log(this.state);
-    }
     
     render() {
-        const { access_token, isFetching } = this.props.bungo;
+        const { access_token, token_type, expires_in, membership_id } = this.props.bungo;
         console.log('current props: ', this.props);
       return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          {/* access_token && <ActivityIndicator
+          { access_token === '' && <ActivityIndicator
             size="large"
-          />*/}
-          <Button
-            title="wtf"
-            onPress={() => alert(this.state.access_token)}
-          />
+          />}
+          <Text style={{ paddingLeft: 30, paddingRight: 30 }}>Access Token: {access_token}</Text>
+          <Text>Token Type: {token_type}</Text>
+          <Text>Expires In:{expires_in}</Text>
+          <Text>Membership ID: {membership_id}</Text>
         </View>
       );
     }

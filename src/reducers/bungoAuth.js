@@ -14,14 +14,16 @@ export default bungoTokenReducer = (state = initialState, action) => {
         case BUNGO_FETCH:
             return {
                 ...state,
-                people: [],
                 isFetching: true
             }
         case BUNGO_FETCH_SUCCESS:
             return {
                 ...state,
                 isFetching: false,
-                access_token: action.data.access_token
+                access_token: action.data.access_token,
+                expires_in : action.data.expires_in,
+                membership_id: action.data.membership_id,
+                token_type: action.data.token_type
             }
         case BUNGO_FETCH_FAILURE:
             return {
