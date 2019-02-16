@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, ActivityIndicator, Button } from 'react-native';
 import { WebBrowser, Linking } from 'expo';
 import { connect } from 'react-redux';
-// import { getBungoTokenFromAPI } from '../actions/';
+import { getBungoTokenFromAPI, bungoGiveToken } from '../actions/';
 import { bungoApp } from '../../bungoApp';
 import firebase from 'firebase';
 
@@ -25,45 +25,47 @@ class LoadingScreen extends Component {
         this.setState({ url: event.url });
         let { path, queryParams } = Expo.Linking.parse(event.url);
         // alert(`Linked to app with path: ${path} and data: ${JSON.stringify(queryParams)}`);
-        await this._bungoGiveToken(queryParams);
-        // await this.props.getBungoTokenFromAPI(queryParams.code);
+        // await this._bungoGiveToken(queryParams);
+        // await this.props.getBungoTokenFromAPI();
+        await this.props.bungoGiveToken(queryParams.code);
+        // await this.props.bungoGiveToken(queryParams.code);
     };
 
-    _bungoGiveToken = async(queryParams) => {
-        try {
-            let response = await fetch(BUNGO_TOKEN_REQ, {
-                method: 'POST',
-                headers: {
-                     'X-API-Key': bungoApp.apiKey,
-                     'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: this.createFormParams({
-                    grant_type: 'authorization_code',
-                    client_id: bungoApp.client_id,
-                    code: queryParams.code,
-                })
-            });
+    // _bungoGiveToken = async(queryParams) => {
+    //     try {
+    //         let response = await fetch(BUNGO_TOKEN_REQ, {
+    //             method: 'POST',
+    //             headers: {
+    //                  'X-API-Key': bungoApp.apiKey,
+    //                  'Content-Type': 'application/x-www-form-urlencoded'
+    //             },
+    //             body: this.createFormParams({
+    //                 grant_type: 'authorization_code',
+    //                 client_id: bungoApp.client_id,
+    //                 code: queryParams.code,
+    //             })
+    //         });
 
-            let json = await response.json();
-            alert(JSON.stringify({...json, 'kirk':'sucksalottadick'}))
-            console.log('response: ', {...json, 'kirk':'sucksalottadick'});
-            // return response;
+    //         let json = await response.json();
+    //         alert(JSON.stringify({...json, 'kirk':'sucksalottadick'}))
+    //         console.log('response: ', {...json, 'kirk':'sucksalottadick'});
+    //         // return response;
             
-            //add to state
-        }
-        catch (err) {
-            console.log('err: ',err);
-            console.log('err.response.data: ',err.response.data);
-            console.log('err.response.data.error: ',err.response.data.error);
-            this.setState({ error: err.response.data.error });
-        }
-    }
+    //         //add to state
+    //     }
+    //     catch (err) {
+    //         console.log('err: ',err);
+    //         console.log('err.response.data: ',err.response.data);
+    //         console.log('err.response.data.error: ',err.response.data.error);
+    //         this.setState({ error: err.response.data.error });
+    //     }
+    // }
 
-    createFormParams = (params) => {
-        return Object.keys(params)
-            .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-            .join('&');
-    }
+    // createFormParams = (params) => {
+    //     return Object.keys(params)
+    //         .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+    //         .join('&');
+    // }
 
     hideLoad = () => {
         console.log(this.state);
@@ -94,7 +96,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        //getBungoTokenFromAPI: (queryParams) => dispatch(getBungoTokenFromAPI(queryParams))
+        bungoGiveToken: (code) => dispatch(bungoGiveToken(code))
     }
 }
 

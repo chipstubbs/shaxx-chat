@@ -1,51 +1,43 @@
 import { BUNGO_FETCH, BUNGO_FETCH_FAILURE, BUNGO_FETCH_SUCCESS } from "./Types";
 import { bungoApp } from '../../bungoApp';
+const BUNGO_TOKEN_REQ = 'https://www.bungie.net/platform/app/oauth/token/';
 
-export const getBungoTokenFromAPI = (queryParams) => {
-    return (dispatch, queryParams) => {
+export const getBungoTokenFromAPI = () => {
+    return (dispatch) => {
         dispatch(getBungoToken());
-        // dispatch(bungoGiveToken(queryParams));
     }
 }
 
-// bungoGiveToken = async(queryParams) => {
-//     try {
-//         let response = await fetch(BUNGO_TOKEN_REQ, {
-//             method: 'POST',
-//             headers: {
-//                  'X-API-Key': bungoApp.apiKey,
-//                  'Content-Type': 'application/x-www-form-urlencoded'
-//             },
-//             body: this.createFormParams({
-//                 grant_type: 'authorization_code',
-//                 client_id: bungoApp.client_id,
-//                 code: queryParams,
-//             })
-//         });
+export function bungoGiveToken(code) {
+    return function action(dispatch) {
+      dispatch({ type: BUNGO_FETCH })
+  
+      const request = fetch(BUNGO_TOKEN_REQ, {
+            method: 'POST',
+            headers: {
+                    'X-API-Key': bungoApp.apiKey,
+                    'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: this.createFormParams({
+                grant_type: 'authorization_code',
+                client_id: bungoApp.client_id,
+                code: code,
+            })
+        });
+      
+      return request.then(response => response.json())
+        .then(
+            response => dispatch(getBungoTokenSuccess(response)),
+            err => dispatch(getBungoTokenFailure(err))
+        );
+    }
+}
 
-//         let json = await response.json();
-//         // alert(JSON.stringify({...json, 'kirk':'sucksalottadick'}))
-//         // console.log('response: ', {...json, 'kirk':'sucksalottadick'});
-//         // return response;
-//         return (dispatch, json) => {
-//             dispatch(getBungoTokenSuccess(json));
-//         }
-//         //add to state
-//     }
-//     catch (err) {
-//         // console.log('err: ',err);
-//         // console.log('err.response.data: ',err.response.data);
-//         // console.log('err.response.data.error: ',err.response.data.error);
-//         return (dispatch, err) => {
-//             dispatch(getBungoTokenFailure(err));
-//         }
-//     }
-// }
-// createFormParams = (params) => {
-//     return Object.keys(params)
-//         .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-//         .join('&');
-// }
+createFormParams = (params) => {
+    return Object.keys(params)
+        .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+        .join('&');
+}
 
 function getBungoToken() {
     return {
