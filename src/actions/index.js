@@ -56,7 +56,7 @@ function getBungoToken() {
 function getBungoTokenSuccess(data) {
     return {
         type: BUNGO_FETCH_SUCCESS,
-        data: json
+        data: data
     }
 }
 
