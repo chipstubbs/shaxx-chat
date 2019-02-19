@@ -5,7 +5,12 @@ class WelcomeScreen extends Component {
   removeItemValue = async (key) => {
     try {
       await AsyncStorage.removeItem('destinyMembershipId');
-      console.log('removed key');
+      let keys = ['access_token', 'expires_in', 'membership_id', 'destinyMembershipId', 'membershipType', 'displayName'];
+      AsyncStorage.multiRemove(keys, (err) => {
+        // keys removed, if they existed
+        // do most stuff after removal
+      });
+      console.log('removed keys: ', keys);
     }
     catch(exception) {
       return false;

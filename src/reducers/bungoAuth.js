@@ -1,4 +1,4 @@
-import { BUNGO_FETCH, BUNGO_FETCH_FAILURE, BUNGO_FETCH_SUCCESS } from '../actions/Types';
+import { BUNGO_FETCH, BUNGO_FETCH_FAILURE, BUNGO_FETCH_SUCCESS, GET_MEMBERSHIPS, FUCKING_ERROR, REFRESH_TOKEN } from '../actions/Types';
 import { AsyncStorage } from 'react-native';
 
 const initialState = {
@@ -25,13 +25,15 @@ export default bungoTokenReducer = (state = initialState, action) => {
             }
         case BUNGO_FETCH_SUCCESS:
             if (action.data.access_token) { AsyncStorage.setItem('access_token', action.data.access_token) }
-            if (action.data.expires_in) { AsyncStorage.setItem('expires_in', action.data.expires_in) }
+            if (action.data.expires_in) { AsyncStorage.setItem('expires_in', action.data.expires_in.toString()) }
             if (action.data.membership_id) { AsyncStorage.setItem('membership_id', action.data.membership_id) }
             return {
                 ...state,
                 isFetching: false,
                 access_token: action.data.access_token,
                 expires_in : action.data.expires_in,
+                refresh_token: action.data.refresh_token,
+                refresh_expires_in: action.data.refresh_expires_in,
                 membership_id: action.data.membership_id,
                 token_type: action.data.token_type
             }
@@ -41,9 +43,9 @@ export default bungoTokenReducer = (state = initialState, action) => {
                 isFetching: false,
                 error: true
             }
-        case 'GET_MEMBERSHIPS':
+        case GET_MEMBERSHIPS:
             if (action.data.membershipId) { AsyncStorage.setItem('destinyMembershipId', action.data.membershipId) }
-            if (action.data.membershipType) { AsyncStorage.setItem('membershipType', action.data.membershipType) }
+            if (action.data.membershipType) { AsyncStorage.setItem('membershipType', action.data.membershipType.toString()) }
             if (action.data.displayName) { AsyncStorage.setItem('displayName', action.data.displayName) }
             
             return {
@@ -55,7 +57,7 @@ export default bungoTokenReducer = (state = initialState, action) => {
                     iconPath: action.data.iconPath
                 }
             }
-        case 'FUCKING_ERROR':
+        case FUCKING_ERROR:
             return {
                 ...state,
                 error: action.err
