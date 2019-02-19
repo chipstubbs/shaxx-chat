@@ -80,9 +80,3 @@ function getBungoTokenFailure() {
         type: BUNGO_FETCH_FAILURE
     }
 }
-
-// export const bungoAuthorize = (prop) => ({
-//     type: BUNGO_FETCH,
-//     id: 'whatevs',
-//     info: prop
-// });

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, ActivityIndicator, Button, Image } from 'react-native';
+import { AsyncStorage, View, Text, ActivityIndicator, Button, Image } from 'react-native';
 import { WebBrowser, Linking } from 'expo';
 import { connect } from 'react-redux';
 import { bungoGiveToken, getMemberships } from '../actions/';
@@ -15,60 +15,46 @@ const BUNGO_BASE = 'https://www.bungie.net/Platform';
 class LoadingScreen extends Component {
     
     componentDidMount() {
-        // Log into Bungo
-        WebBrowser.openBrowserAsync(BUNGO_AUTH);
-        // Get params off redirectUrl and send to _bungoGiveToken
-        Linking.addEventListener('url', this._handleUrl);
+        this.checkIfLoggedIn();
+        if (this.props.bungo.user.destinyMembershipId === undefined) {
+            console.log('async no');
+            // Log into Bungo
+            WebBrowser.openBrowserAsync(BUNGO_AUTH);
+            // Get params off redirectUrl and send to _bungoGiveToken
+            Linking.addEventListener('url', this._handleUrl);
+        } else {
+            console.log('async yes');
+            // this.props.bungo.destinyMembershipId = AsyncStorage.getItem('user.destinyMembershipId');
+        }
     }
 
     _handleUrl = async event => {
         WebBrowser.dismissBrowser();
         this.setState({ url: event.url });
         let { path, queryParams } = Expo.Linking.parse(event.url);
-        // alert(`Linked to app with path: ${path} and data: ${JSON.stringify(queryParams)}`);
-        // await this._bungoGiveToken(queryParams);
-        // await this.props.getBungoTokenFromAPI();
         await this.props.bungoGiveToken(queryParams.code);
     };
 
-    // _bungoGiveToken = async(queryParams) => {
-    //     try {
-    //         let response = await fetch(BUNGO_TOKEN_REQ, {
-    //             method: 'POST',
-    //             headers: {
-    //                  'X-API-Key': bungoApp.apiKey,
-    //                  'Content-Type': 'application/x-www-form-urlencoded'
-    //             },
-    //             body: this.createFormParams({
-    //                 grant_type: 'authorization_code',
-    //                 client_id: bungoApp.client_id,
-    //                 code: queryParams.code,
-    //             })
-    //         });
 
-    //         let json = await response.json();
-    //         alert(JSON.stringify({...json, 'kirk':'sucksalottadick'}))
-    //         console.log('response: ', {...json, 'kirk':'sucksalottadick'});
-    //         // return response;
-            
-    //         //add to state
-    //     }
-    //     catch (err) {
-    //         console.log('err: ',err);
-    //         console.log('err.response.data: ',err.response.data);
-    //         console.log('err.response.data.error: ',err.response.data.error);
-    //         this.setState({ error: err.response.data.error });
-    //     }
-    // }
-
-    // createFormParams = (params) => {
-    //     return Object.keys(params)
-    //         .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-    //         .join('&');
-    // }
+    checkIfLoggedIn = async () => {
+        this.props.bungo.destinyMembershipId = '';
+        try {
+            this.props.bungo.user.destinyMembershipId = await AsyncStorage.getItem('destinyMembershipId') || undefined;
+            this.props.bungo.access_token = await AsyncStorage.getItem('access_token') || '';
+            this.props.bungo.user.displayName = await AsyncStorage.getItem('displayName') || '';
+            this.props.bungo.user.membershipType = await AsyncStorage.getItem('membershipType') || '';
+            // AsyncStorage getAllKeys -> multiGet
+            // set all here in callback
+        } catch (error) {
+            // Error retrieving data
+            console.log('checkIfLoggedIn error: ', error.message);
+        }
+        console.log('destinymembershipID from check ', this.props.bungo.destinyMembershipId);
+        // return this.props.bungo.destinyMembershipId;
+    }
     
     render() {
-        const { access_token, token_type, expires_in, membership_id, getMemberships, 
+        const { access_token, token_type, expires_in, membership_id, 
             destinyMembershipId, membershipType, displayName, iconPath } = this.props.bungo;
         console.log('current props: ', this.props);
       return (
@@ -91,6 +77,10 @@ class LoadingScreen extends Component {
               title="Get Membership"
               onPress={() => this.props.getMemberships(access_token)}
           />
+          <Button
+            title="Console"
+            onPress={() => console.log(this.props)}
+          />
         </View>
       );
     }
@@ -105,7 +95,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         bungoGiveToken: (code) => dispatch(bungoGiveToken(code)),
-        getMemberships: (access_token) => dispatch(getMemberships(access_token))
+        getMemberships: (access_token) => dispatch(getMemberships(access_token)),
     }
 }
 

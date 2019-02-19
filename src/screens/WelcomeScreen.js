@@ -1,8 +1,16 @@
 import React, { Component } from 'react';
-import { View, Button } from 'react-native';
+import { View, Button, AsyncStorage } from 'react-native';
 
 class WelcomeScreen extends Component {
-  
+  removeItemValue = async (key) => {
+    try {
+      await AsyncStorage.removeItem('destinyMembershipId');
+      console.log('removed key');
+    }
+    catch(exception) {
+      return false;
+    }
+  }
   
   render() {
     return (
@@ -14,6 +22,10 @@ class WelcomeScreen extends Component {
         <Button
           title="Dash"
           onPress={() => this.props.navigation.navigate('Dashboard')}
+        />
+        <Button
+          title="Remove Async"
+          onPress={() => this.removeItemValue('destinyMembershipId')}
         />
       </View>
     );
