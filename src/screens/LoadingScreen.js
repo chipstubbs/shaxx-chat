@@ -47,6 +47,7 @@ class LoadingScreen extends Component {
         try {
             this.props.bungo.user.destinyMembershipId = await AsyncStorage.getItem('destinyMembershipId') || '';
             this.props.bungo.access_token = await AsyncStorage.getItem('access_token') || '';
+            this.props.bungo.user.membershipType = await AsyncStorage.getItem('membershipType') || '';
             if (this.props.bungo.user.destinyMembershipId != '') {
                 this.setState({ logged_in: true });
             } else {

@@ -1,99 +1,61 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Text, Button, AsyncStorage } from 'react-native';
+import { ScrollView, View, Text, Image, Button, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import { getProfileInfo } from '../actions/';
 class Feed extends Component {
     constructor(props){
         super(props);
-        console.log(this.props);
+        console.log('Feed constructor props', props);
+        this.state = {
+            spinnitFilter: true,
+            showCharacter: false
+        }
     }
 
-    componentWillMount() {
-        AsyncStorage.getItem('access_token').then((token) => {
-            this.setState({
-              access_token: token
-            });
-        });
+    async componentDidMount() {
+        await this.props.getProfileInfo(this.props.bungo.access_token, this.props.bungo.user.membershipType, this.props.bungo.user.destinyMembershipId);
+        this.setState({ showCharacter: true })
+    }
+
+    showCharacterSelection = () => {
+        if ( this.state.showCharacter ) {
+            console.log(this.props.bungo);
+            const { character1, character2, character3 } = this.props.bungo.user;
+            const charList = [ character1, character2, character3 ];
+            const charType = { 0:'Titan', 1:'Hunter', 2:'Space Wizard'};
+            
+            return (
+                charList.map((character, i) => {
+                    return (
+                        <View key={i} style={{ flex: 1 }}>
+                            <Image
+                            style={{ width: 96, height: 96}}
+                            resizeMode="cover"
+                            source={{ uri: 'https://www.bungie.net' + character.emblemPath }}
+                            />
+                            <Text style={{  }}>{charType[character.classType]}</Text>
+                        </View>
+                    );
+                })
+            );
+            
+        }
     }
 
     render() {
         
-
         return (
             <ScrollView contentContainerStyle={{ alignItems: 'center', justifyContent: 'space-between' }}>
                 <Button onPress={() => this.props.navigation.navigate('Welcome')}
                     title="Go Back to Welcome"
                 />
-                <Button onPress={() => console.log(this.state)}
-                    title="console"
+                <Button onPress={() => console.log(this.props)}
+                    title="Console Props"
                 />
-                <Button title="Get Profile"
-                    onPress={() => this.props.getProfileInfo()}
-                />
-            
-                <View style={{ marginBottom: 30 }}>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                </View>
-                <View style={{ marginBottom: 30 }}>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                </View>
-                <View style={{ marginBottom: 30 }}>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                </View>
-                <View style={{ marginBottom: 30 }}>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                </View>
-                <View style={{ marginBottom: 30 }}>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                </View>
-                <View style={{ marginBottom: 30 }}>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                </View>
-                <View style={{ marginBottom: 30 }}>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                    <Text>Feed</Text>
-                </View>
+                <Button onPress={() => console.log(this.state)} title="Console State" />
+                {
+                    this.showCharacterSelection()
+                }
             </ScrollView>
         );
     }
@@ -107,7 +69,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        getProfileInfo: () => dispatch(getProfileInfo())
+        getProfileInfo: (access_token, membershipType, destinyMembershipId) => dispatch(getProfileInfo(access_token, membershipType, destinyMembershipId))
     }
 }
 

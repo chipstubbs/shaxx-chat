@@ -1,4 +1,4 @@
-import { BUNGO_FETCH, BUNGO_FETCH_FAILURE, BUNGO_FETCH_SUCCESS, GET_MEMBERSHIPS, FUCKING_ERROR, REFRESH_TOKEN } from '../actions/Types';
+import { BUNGO_FETCH, BUNGO_FETCH_FAILURE, BUNGO_FETCH_SUCCESS, GET_MEMBERSHIPS, FUCKING_ERROR, REFRESH_TOKEN, GET_PROFILE } from '../actions/Types';
 import { AsyncStorage } from 'react-native';
 
 const initialState = {
@@ -55,6 +55,16 @@ export default bungoTokenReducer = (state = initialState, action) => {
                     membershipType: action.data.membershipType,
                     displayName: action.data.displayName,
                     iconPath: action.data.iconPath
+                }
+            }
+        case GET_PROFILE:
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    character1: action.characters.character1,
+                    character2: action.characters.character2,
+                    character3: action.characters.character3
                 }
             }
         case FUCKING_ERROR:

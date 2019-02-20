@@ -1,26 +1,21 @@
-import { BUNGO_FETCH, BUNGO_FETCH_FAILURE, BUNGO_FETCH_SUCCESS, GET_MEMBERSHIPS, FUCKING_ERROR, REFRESH_TOKEN } from "./Types";
+import { BUNGO_FETCH, BUNGO_FETCH_FAILURE, BUNGO_FETCH_SUCCESS, GET_MEMBERSHIPS, FUCKING_ERROR, REFRESH_TOKEN, GET_PROFILE } from "./Types";
 import { DestinyActivityModeType } from './DestinyTypes';
-import { AsyncStorage } from 'react-native';
 import { bungoApp } from '../../bungoApp';
 
 const BUNGO_BASE = 'https://www.bungie.net/Platform';
-// const ACCESS_TOKEN = AsyncStorage.getItem('access_token').then((token) => { return token; });
-// const membershipType = AsyncStorage.getItem('membershipType').then((type) => { return type; });
-// const destinyMembershipId = AsyncStorage.getItem('destinyMembershipId').then((dMID) => { return dMID; });
 
-export const getProfileInfo = () => {
+export const getProfileInfo = (ACCESS_TOKEN, membershipType, destinyMembershipId) => {
     
     return function action(dispatch) {
-        // let destinyMembershipId = await AsyncStorage.getItem('destinyMembershipId');
-        // let membershipType = await AsyncStorage.getItem('membershipType');
-        // let ACCESS_TOKEN = await AsyncStorage.getItem('access_token');
-        // console.log('membershipType', membershipType);
-        // console.log('ACCESS_TOKEN ', ACCESS_TOKEN);
+        console.log('membershipType: ', membershipType);
+        console.log('ACCESS_TOKEN: ', ACCESS_TOKEN);
+        console.log('destinyMembershipId: ', destinyMembershipId);
+        const queryComponents = encodeURIComponent('Characters');
 
-        let request = fetch(BUNGO_BASE + '/Destiny2/' + membershipType.toString() + '/Profile/' + destinyMembershipId.toString() + '/?components=100', {
+        let request = fetch(BUNGO_BASE + '/Destiny2/' + membershipType + '/Profile/' + destinyMembershipId + '/?components=' + queryComponents, {
             method: 'get',
             headers: {
-                'Authorization': `Bearer ${ACCESS_TOKEN.toString()}`,
+                'Authorization': `Bearer ${ACCESS_TOKEN}`,
                 'X-API-Key': bungoApp.apiKey
             }
         });
@@ -29,9 +24,23 @@ export const getProfileInfo = () => {
             .then(response => response.json())
             .then(
                 response => {
-                    console.log('getProfileInfo - destinymembershipId: ', destinyMembershipId);
-                    console.log('getProfileInfo: ', response);
-                    dispatch({ type: 'GET_PROFILE', data: response });
+                    // get character ID and things we need'=
+                    const resObj = response.Response.characters.data;
+                    let characterArray = Object.keys(resObj);
+                    let characterObj = {};
+                    characterArray.forEach((value, i) => {
+                        let num = 'character'+(i+1);
+                        characterObj[num] = {
+                            characterId: resObj[characterArray[i]].characterId,
+                            classType: resObj[characterArray[i]].classType,
+                            emblemPath: resObj[characterArray[i]].emblemPath,
+                            stat: resObj[characterArray[i]].stats,
+                            timePlayed: resObj[characterArray[i]].minutesPlayedTotal
+                        };
+                    })
+            
+                    // console.log(characterObj);
+                    dispatch({ type: GET_PROFILE, characters: characterObj });
                 },
                 err => {
                     console.log('error in getProfileInfo: ', err);
