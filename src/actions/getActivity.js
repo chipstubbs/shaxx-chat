@@ -74,22 +74,3 @@ export const getActivityForCharacter = (characterId) => {
             );
     }
 }
-
-function getBungoToken() {
-    return {
-        type: BUNGO_FETCH
-    }
-}
-
-function getBungoTokenSuccess(data) {
-    return {
-        type: BUNGO_FETCH_SUCCESS,
-        data: data
-    }
-}
-
-function getBungoTokenFailure() {
-    return {
-        type: BUNGO_FETCH_FAILURE
-    }
-}

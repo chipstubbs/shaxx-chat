@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Text, Image, Button, ActivityIndicator } from 'react-native';
+import { ScrollView, View, Text, TouchableOpacity, Button, ActivityIndicator } from 'react-native';
+import { Card, ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { getProfileInfo } from '../actions/';
 class Feed extends Component {
@@ -25,18 +26,20 @@ class Feed extends Component {
             const charType = { 0:'Titan', 1:'Hunter', 2:'Space Wizard'};
             
             return (
-                charList.map((character, i) => {
-                    return (
-                        <View key={i} style={{ flex: 1 }}>
-                            <Image
-                            style={{ width: 96, height: 96}}
-                            resizeMode="cover"
-                            source={{ uri: 'https://www.bungie.net' + character.emblemPath }}
-                            />
-                            <Text style={{  }}>{charType[character.classType]}</Text>
-                        </View>
-                    );
-                })
+                <Card title="Select Character to View Matches" style={{ flex: 1 }}>
+                    {charList.map((character, i) => {
+                        return (
+                            <TouchableOpacity key={i} onPress={() => alert(character.characterId)}>
+                                <ListItem
+                                    roundAvatar
+                                    title={charType[character.classType]}
+                                    //avatar={{ uri: 'https://www.bungie.net'+character.emblemPath }}
+                                    leftAvatar={{ containerStyle: { width: 96, height: 96 }, source: { uri: 'https://www.bungie.net'+character.emblemPath } }}
+                                />
+                            </TouchableOpacity>
+                        );
+                    })}
+                </Card>
             );
             
         }
