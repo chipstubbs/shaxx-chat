@@ -15,7 +15,7 @@ class Feed extends Component {
 
     async componentDidMount() {
         await this.props.getProfileInfo(this.props.bungo.access_token, this.props.bungo.user.membershipType, this.props.bungo.user.destinyMembershipId);
-        this.setState({ showCharacter: true })
+        this.setState({ showCharacter: true, spinnitFilter: false })
     }
 
     showCharacterSelection = () => {
@@ -56,6 +56,7 @@ class Feed extends Component {
                     title="Console Props"
                 />
                 <Button onPress={() => console.log(this.state)} title="Console State" />
+                {this.state.spinnitFilter && <ActivityIndicator size="large" />}
                 {
                     this.showCharacterSelection()
                 }
