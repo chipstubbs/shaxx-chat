@@ -27,8 +27,8 @@ class LoadingScreen extends Component {
             this.props.navigation.navigate('Dashboard');
         } else {
             console.log('not logged in');
-            // Log into Bungo
-            WebBrowser.openBrowserAsync(BUNGO_AUTH);
+            // Log into Bungo // Maybe use WebBrowser.openAuthSessionAsync instead of openBrowserAsync
+            WebBrowser.openAuthSessionAsync(BUNGO_AUTH);
             // Get params off redirectUrl and send to _bungoGiveToken
             Linking.addEventListener('url', this._handleUrl);
         }
