@@ -28,7 +28,7 @@ class LoadingScreen extends Component {
         } else {
             console.log('not logged in');
             // Log into Bungo // Maybe use WebBrowser.openAuthSessionAsync instead of openBrowserAsync
-            WebBrowser.openAuthSessionAsync(BUNGO_AUTH);
+            WebBrowser.openBrowserAsync(BUNGO_AUTH);
             // Get params off redirectUrl and send to _bungoGiveToken
             Linking.addEventListener('url', this._handleUrl);
         }

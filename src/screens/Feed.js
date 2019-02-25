@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ScrollView, View, Text, TouchableOpacity, Button, ActivityIndicator } from 'react-native';
 import { Card, ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { getProfileInfo } from '../actions/';
+import { getProfileInfo, getActivityForCharacter } from '../actions/';
 class Feed extends Component {
     constructor(props){
         super(props);
@@ -20,20 +20,20 @@ class Feed extends Component {
 
     showCharacterSelection = () => {
         if ( this.state.showCharacter ) {
-            console.log(this.props.bungo);
-            const { character1, character2, character3 } = this.props.bungo.user;
+            const ACCESS_TOKEN = this.props.bungo.access_token;
+            const { character1, character2, character3, membershipType, destinyMembershipId } = this.props.bungo.user;
             const charList = [ character1, character2, character3 ];
             const charType = { 0:'Titan', 1:'Hunter', 2:'Space Wizard'};
-            
             return (
                 <Card title="Select Character to View Matches" style={{ flex: 1 }}>
                     {charList.map((character, i) => {
+                        let characterId = character.characterId;
+                        let characterNum = 'character'+(i+1);
                         return (
-                            <TouchableOpacity key={i} onPress={() => alert(character.characterId)}>
+                            <TouchableOpacity key={i} onPress={() => this.props.getActivityForCharacter(ACCESS_TOKEN, membershipType, destinyMembershipId, characterId, characterNum)}>
                                 <ListItem
                                     roundAvatar
                                     title={charType[character.classType]}
-                                    //avatar={{ uri: 'https://www.bungie.net'+character.emblemPath }}
                                     leftAvatar={{ containerStyle: { width: 96, height: 96 }, source: { uri: 'https://www.bungie.net'+character.emblemPath } }}
                                 />
                             </TouchableOpacity>
@@ -73,7 +73,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        getProfileInfo: (access_token, membershipType, destinyMembershipId) => dispatch(getProfileInfo(access_token, membershipType, destinyMembershipId))
+        getProfileInfo: (access_token, membershipType, destinyMembershipId) => dispatch(getProfileInfo(access_token, membershipType, destinyMembershipId)),
+        getActivityForCharacter: (access_token, membershipType, destinyMembershipId, characterId, characterNum) => dispatch(getActivityForCharacter(access_token, membershipType, destinyMembershipId, characterId, characterNum))
     }
 }
 

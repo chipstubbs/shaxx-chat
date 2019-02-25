@@ -1,4 +1,4 @@
-import { BUNGO_FETCH, BUNGO_FETCH_FAILURE, BUNGO_FETCH_SUCCESS, GET_MEMBERSHIPS, FUCKING_ERROR, REFRESH_TOKEN, GET_PROFILE } from '../actions/Types';
+import { BUNGO_FETCH, BUNGO_FETCH_FAILURE, BUNGO_FETCH_SUCCESS, GET_MEMBERSHIPS, FUCKING_ERROR, GET_ACTIVITY_FOR_CHARACTER, GET_PROFILE } from '../actions/Types';
 import { AsyncStorage } from 'react-native';
 
 const initialState = {
@@ -65,6 +65,14 @@ export default bungoTokenReducer = (state = initialState, action) => {
                     character1: action.characters.character1,
                     character2: action.characters.character2,
                     character3: action.characters.character3
+                }
+            }
+        case GET_ACTIVITY_FOR_CHARACTER:
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    activities: action.data
                 }
             }
         case FUCKING_ERROR:

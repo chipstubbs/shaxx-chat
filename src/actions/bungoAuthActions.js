@@ -51,7 +51,7 @@ export const getMemberships = (token) => {
             .then(response => response.json())
             .then(
                 response => {
-                    // console.log('membershipresponse', response);
+                    console.log('membershipresponse', response);
                     dispatch({ type: GET_MEMBERSHIPS, data: response.Response.destinyMemberships[0] });
                 },
                 err => {

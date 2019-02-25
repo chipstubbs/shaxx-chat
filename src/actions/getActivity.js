@@ -1,4 +1,4 @@
-import { BUNGO_FETCH, BUNGO_FETCH_FAILURE, BUNGO_FETCH_SUCCESS, GET_MEMBERSHIPS, FUCKING_ERROR, REFRESH_TOKEN, GET_PROFILE } from "./Types";
+import { GET_ACTIVITY_FOR_CHARACTER, FUCKING_ERROR, REFRESH_TOKEN, GET_PROFILE } from "./Types";
 import { DestinyActivityModeType } from './DestinyTypes';
 import { bungoApp } from '../../bungoApp';
 
@@ -50,10 +50,11 @@ export const getProfileInfo = (ACCESS_TOKEN, membershipType, destinyMembershipId
     }
 }
 
-export const getActivityForCharacter = (characterId) => {
+export const getActivityForCharacter = (ACCESS_TOKEN, membershipType, destinyMembershipId, characterId, characterNum) => {
     return function action(dispatch) {
-    
-        let request = fetch(BUNGO_BASE + '/Destiny2/' + membershipType + '/Account/' + destinyMembershipId + '/Character/' + characterId + '/Stats/Activies/', {
+        // characterNum used right now to keep track of which character was chosen.. need to clean up
+        let params = '?count=10&mode='+DestinyActivityModeType.Gambit+'&page=0';
+        let request = fetch(BUNGO_BASE + '/Destiny2/' + membershipType + '/Account/' + destinyMembershipId + '/Character/' + characterId + '/Stats/Activities/' + params, {
             method: 'get',
             headers: {
                 'Authorization': `Bearer ${ACCESS_TOKEN}`,
@@ -65,8 +66,8 @@ export const getActivityForCharacter = (characterId) => {
             .then(response => response.json())
             .then(
                 response => {
-                    // console.log('membershipresponse', response);
-                    dispatch({ type: GET_MEMBERSHIPS, data: response.Response.destinyMemberships[0] });
+                    // console.log('getActivityForCharacter: ', response);
+                    dispatch({ type: GET_ACTIVITY_FOR_CHARACTER, data: response.Response.activities, character: characterNum });
                 },
                 err => {
                     dispatch({ type: FUCKING_ERROR, err: err })
